@@ -1,0 +1,173 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> PONG </title>
+
+        <script>
+            var canvas;
+            var contexto;
+
+            //Variáveis referentes a bola
+            var bolaX = 50;
+            var velocidadeX = 10;
+            var bolaY = 50;
+            var velocidadeY = 4;
+
+            //Variáveis e constantes referentes ao taco
+            var tacoY = 300;
+            var taco2Y = 300;
+            const ALTURA_TACO = 100;
+            const LARGURA_TACO = 10;
+            const PONTOS_VITORIA = 3;
+            var mouseX = 0;
+            var mouseY = 0;
+            var pontosP1 = 0;
+            var pontosP2 = 0;
+
+            var telaVitoria = false;
+
+
+            window.onload = function(){
+                canvas = document.getElementById('tela');
+                contexto = canvas.getContext('2d');
+                
+                setInterval(function(){desenha();moveCoisas();},1000/60);
+                
+                document.body.addEventListener("mousemove",atualizaPosiMouse);
+                canvas.addEventListener("mousedown",click);
+            }
+            
+            function click(){
+                if(telaVitoria){
+                    pontosP1 =0;
+                    pontosP2 =0;
+                    telaVitoria = false;
+                }
+            }
+            
+            function atualizaPosiMouse(evt){
+                mouseX = evt.clientY;
+                tacoY = mouseX - ALTURA_TACO/2;
+            }
+
+            function desenha(){
+                //Fundo
+                contexto.fillStyle = "black";
+                contexto.fillRect(0,0,canvas.width,canvas.height);
+                
+                //Caso um dos 2 vença
+                if(telaVitoria){
+                    contexto.fillStyle = 'white';
+                    if(pontosP1 >= PONTOS_VITORIA){
+                        contexto.font = "30px Arial";
+                        contexto.fillText("Jogador 1 venceu",295,200);
+                    }if(pontosP2 >= PONTOS_VITORIA){
+                        contexto.font = "30px Arial";
+                        contexto.fillText("Jogador 2 venceu",295,200);
+                    }
+
+                    contexto.fillText("Click para continuar", 285, 280);
+                    return;
+                }
+
+                //Pontuação
+                contexto.fillStyle = 'white';
+                contexto.font = "20px Arial";
+                contexto.fillText("Pontos: "+pontosP1,20,25);
+                contexto.fillText("Pontos: "+pontosP2,695,25);
+
+                //Bola
+                contexto.fillStyle = "red";
+                contexto.beginPath();
+                contexto.arc(bolaX,bolaY,10,0,Math.PI*2,true);
+                contexto.fill();
+                
+                //Taco
+                contexto.fillStyle = 'white';
+                contexto.fillRect(1,tacoY,LARGURA_TACO,ALTURA_TACO);
+
+                //Taco rival
+                contexto.fillStyle = 'white';
+                contexto.fillRect(789,taco2Y,LARGURA_TACO,ALTURA_TACO);
+
+
+                //Traços do meio
+                for(i = 0; i < canvas.height; i+=37){
+                    contexto.fillStyle = 'white';
+                    contexto.fillRect(canvas.width/2 - 1,i,2,20);
+                }
+            }
+            
+            function resetarBola(){
+                bolaX = canvas.width/2;
+                bolaY = canvas.height/2;
+                velocidadeX *= -1;
+                if(pontosP1 >= PONTOS_VITORIA || pontosP2 >= PONTOS_VITORIA){
+                    telaVitoria = true;
+                }
+            }
+
+            function moveComputador(){
+                var centroTaco2Y = taco2Y + ALTURA_TACO/2;
+                if(centroTaco2Y < bolaY-35){
+                    taco2Y += 7;
+                }else if(centroTaco2Y > bolaY + 35){
+                    taco2Y -= 7;
+                }
+            }
+
+            function moveCoisas(){
+                //Retorna caso alguém tenha vencido, caso contrário o jogo continuará rodando
+                if(telaVitoria){
+                    return;
+                }
+
+                moveComputador();
+
+                bolaX += velocidadeX;
+                bolaY += velocidadeY;
+                
+                //adversario
+                if(bolaX > canvas.width-3){
+                    if(bolaY > taco2Y && bolaY < taco2Y+ALTURA_TACO){
+                        velocidadeX *= -1;
+
+                        var centroTacoY = taco2Y + ALTURA_TACO/2;
+                        var distanBolaCentroY = bolaY -centroTacoY;
+                        velocidadeY = distanBolaCentroY*0.35;
+                    }else{
+                        pontosP1++;
+                        resetarBola();
+                    }
+                }
+                //Jogador
+                if(bolaX < 3){
+
+                    if(bolaY > tacoY && bolaY < tacoY+ALTURA_TACO){
+                        velocidadeX *= -1;
+
+                        var centroTacoY = tacoY + ALTURA_TACO/2;
+                        var distanBolaCentroY = bolaY -centroTacoY;
+                        velocidadeY = distanBolaCentroY*0.35;
+                    }else{
+                        pontosP2++;
+                        resetarBola();
+                    }
+                }
+
+                if(bolaY > canvas.height){
+                    velocidadeY *= -1;
+                }if(bolaY < 0){
+                    velocidadeY *= -1;
+                }
+            }
+
+        </script>
+
+    </head>
+    <body>
+        <center>
+            <canvas id="tela" width="800" height="500" ></canvas>
+        </center>
+    </body>
+</html>
