@@ -21,9 +21,9 @@ function loadImages(){
     var dataSet = {varName: carPic, theFile: "carro.png"};
 
     var imageList = [
-        {varName: carPic, theFile: "https://github.com/brunojoseln/Jogos-Javascript/blob/master/Corrida/carro.png"},
-        {varName: roadPic, theFile: "https://github.com/brunojoseln/Jogos-Javascript/blob/master/Corrida/track_road.png"},
-        {varName: wallPic, theFile: "https://github.com/brunojoseln/Jogos-Javascript/blob/master/Corrida/track_wall.png"}
+        {varName: carPic, theFile: "carro.png"},
+        {varName: roadPic, theFile: "track_road.png"},
+        {varName: wallPic, theFile: "track_wall.png"}
     ];
 
     picsToLoad = imageList.length;
